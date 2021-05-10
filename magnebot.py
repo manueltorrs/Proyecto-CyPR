@@ -2,7 +2,7 @@ from tdw.controller import Controller
 from tdw.output_data import OutputData, StaticRobot
 from tdw.tdw_utils import TDWUtils
 from tdw.keyboard_controller import KeyboardController
-from typing import Union
+from typing import Union, List
 import ipdb
 
 """
@@ -28,41 +28,76 @@ jointNamesDict = {
 }
 
 
-class KeyboardControl(KeyboardController):
+# class KeyboardControl(KeyboardController):
+    # """
+    # Heredates from KeybpardController.
+    # Creates new methods within the class to move different parts of the magnebot robot.
+    # """
+    # def __init__(self, robotId: Union[int, str],  port: int = 1071) -> None:
+        # """
+        # Initialize class.
+
+        # Args:
+        # port -> default 1071.
+        # Returns:
+        # None.
+        # """
+        # super().__init__(port = port)
+        # self.id = robotId
+
+def moveBase(robotId: Union[int, str], direction: int, wheelId: int, target: float = 80.0) -> dict:
     """
-    Heredates from KeybpardController.
-    Creates new methods within the class to move different parts of the magnebot robot.
+    Move magnebot's base.
+
+    Args:
+    robotId -> robot id.
+    directions -> movement's direction. 1 or -1.
+    wheelId -> wheel joint to move
+    target -> movement's target. Measured in degrees.
+    Returns:
+    A `move_avatar_forward_by` command.
     """
-    def __init__(self, robotId: Union[int, str],  port: int = 1071) -> None:
-        """
-        Initialize class.
-
-        Args:
-        port -> default 1071.
-        Returns:
-        None.
-        """
-        super().__init__(port = port)
-        self.id = robotId
-
-    def moveBase(self, direction: int, force: float = 80) -> dict:
-        """
-        Move magnebot's base.
-
-        Args:
-        directions -> movement's direction.
-        force -> movement-s force.
-        Returns:
-        A `move_avatar_forward_by` command.
-        """
-        return {"$type": "move_avatar_forward_by",
-                "magnitude": force * direction,
-                "avatar_id": self.id}
+    # if ((direction - 1) == -2) or ((direction - 1) == 0):
+    return {"$type": "set_revolute_target",
+            "joint_id": wheelId,
+            "id": robotId,
+            "target": target * direction}
+    # else:
+        # raise ValueError("Direction must be 1 or -1.")
 
 
+def turnBase(robotId: Union[int, str], direction: int, torque: float = 80.0) -> dict:
+    """
+    Rotate robot's base.
+
+    Args:
+    robotId -> robot's id
+    direction -> rotation direction. 1 or -1.
+    torque -> movement's force.
+    Returns:
+    A `turn_avatar_by` command.
+    """
+    return {"$type": "turn_avatar_by",
+            "torque": torque * direction,
+            "avatar_id": robotId}
+
+    # def run(self) -> None:
+
+        # self.listen(key="W", commands=self.moveBase(direction=1), events=["press", "hold"])
+        # self.listen(key="UpArrow", commands=self.moveBase(direction=1), events=["press", "hold"])
+        # self.listen(key="S", commands=self.moveBase(direction=-1), events=["press", "hold"])
+        # self.listen(key="DownArrow", commands=self.moveBase(direction=-1), events=["press", "hold"])
+        # self.listen(key="A", commands=self.turnBase(direction=-1), events=["press", "hold"])
+        # self.listen(key="LeftArrow", commands=self.turnBase(direction=-1), events=["press", "hold"])
+        # self.listen(key="D", commands=self.turnBase(direction=1), events=["press", "hold"])
+        # self.listen(key="RightArrow", commands=self.turnBase(direction=1), events=["press", "hold"])
+        # # self.listen(key="Escape", function=self.stop, events=["press"])
 
 
 
+def stop():
+    done = True
+    c.communicate({"$type": "terminate"})
 
 
 
@@ -70,9 +105,10 @@ class KeyboardControl(KeyboardController):
 
 
 if __name__ == "__main__":
-    c = Controller()
-    c.start()
     robot_id = 0
+    c = KeyboardController()
+    # c = Controller()
+    c.start()
     # Add a Magnebot to the scene and request static data.
     commands = [TDWUtils.create_empty_room(12, 12),
                           {"$type": "add_magnebot",
@@ -151,7 +187,7 @@ if __name__ == "__main__":
         c.communicate([])
 
     # Reset command list
-    commands = []
+    # commands = []
     # for wheel_id in wheel_ids:
         # commands.append({"$type": "set_revolute_target",
                          # "id": robot_id,
@@ -163,14 +199,48 @@ if __name__ == "__main__":
                          # "joint_id": id1,
                          # "target": 0.75})
 
-    commands.append({"$type": "set_revolute_target",
+    done = False
+    # c.listen(key="B", function=stop())
+    c.listen(key="R", commands={"$type": "set_revolute_target",
                      "id": robot_id,
                      "joint_id": jointNamesDict["column"],
-                     "target": 0.75})
-    c.communicate(commands)
+                     "target": 124}, events=["press", "hold"])
+
+    # commands.append({"$type": "set_revolute_target",
+                     # "id": robot_id,
+                     # "joint_id": jointNamesDict["column"],
+                     # "target": 0.75})
+    # c.communicate(commands)
     # Wait a bit.
-    for i in range(100):
+    # for i in range(100):
+        # c.communicate([])
+
+    c.listen(key="W", commands=moveBase(robotId=robot_id, direction=-1,
+                                        wheelId=jointNamesDict["column"], target=124),
+             events=["press", "hold"])
+    # ipdb.set_trace()
+    # c.listen(key="W", commands=moveBase(robotId=robot_id, direction=1, wheelId=jointNamesDict["wheelRightBack"],
+                                        # target=1500),
+             # events=["press", "hold"])
+    # c.listen(key="W", commands=moveBase(robotId=robot_id, direction=1, wheelId=jointNamesDict["wheelRightFront"],
+                                        # target=1500),
+             # events=["press", "hold"])
+    # c.listen(key="W", commands=moveBase(robotId=robot_id, direction=1, wheelId=jointNamesDict["wheelLeftBack"],
+                                        # target=1500),
+             # events=["press", "hold"])
+    # c.listen(key="W", commands=moveBase(robotId=robot_id, direction=1, wheelId=jointNamesDict["wheelLeftFront"],
+                                        # target=1500),
+             # events=["press", "hold"])
+    # c.listen(key="W", commands=moveBase(robotId=robot_id, direction=1), events=["press", "hold"])
+    # c.listen(key="UpArrow", commands=moveBase(robotId=robot_id, direction=1), events=["press", "hold"])
+    # c.listen(key="S", commands=moveBase(robotId=robot_id, direction=-1), events=["press", "hold"])
+    # c.listen(key="DownArrow", commands=moveBase(robotId=robot_id, direction=-1), events=["press", "hold"])
+    c.listen(key="A", commands=turnBase(robotId=robot_id, direction=-1), events=["press", "hold"])
+    c.listen(key="LeftArrow", commands=turnBase(robotId=robot_id, direction=-1), events=["press", "hold"])
+    c.listen(key="D", commands=turnBase(robotId=robot_id, direction=1), events=["press", "hold"])
+    c.listen(key="RightArrow", commands=turnBase(robotId=robot_id, direction=1), events=["press", "hold"])
+    while not done:
         c.communicate([])
 
     # Colse communication after movements
-    c.communicate({"$type": "terminate"})
+    # c.communicate({"$type": "terminate"})
