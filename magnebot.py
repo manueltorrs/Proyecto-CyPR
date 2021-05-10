@@ -2,6 +2,7 @@ from tdw.controller import Controller
 from tdw.output_data import OutputData, StaticRobot
 from tdw.tdw_utils import TDWUtils
 from tdw.keyboard_controller import KeyboardController
+from typing import Union
 import ipdb
 
 """
@@ -26,6 +27,48 @@ jointNamesDict = {
     "magnetRight": 13,
 }
 
+
+class KeyboardControl(KeyboardController):
+    """
+    Heredates from KeybpardController.
+    Creates new methods within the class to move different parts of the magnebot robot.
+    """
+    def __init__(self, robotId: Union[int, str],  port: int = 1071) -> None:
+        """
+        Initialize class.
+
+        Args:
+        port -> default 1071.
+        Returns:
+        None.
+        """
+        super().__init__(port = port)
+        self.id = robotId
+
+    def moveBase(self, direction: int, force: float = 80) -> dict:
+        """
+        Move magnebot's base.
+
+        Args:
+        directions -> movement's direction.
+        force -> movement-s force.
+        Returns:
+        A `move_avatar_forward_by` command.
+        """
+        return {"$type": "move_avatar_forward_by",
+                "magnitude": force * direction,
+                "avatar_id": self.id}
+
+
+
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
     c = Controller()
     c.start()
@@ -47,8 +90,6 @@ if __name__ == "__main__":
     commands.extend(TDWUtils.create_avatar(position={"x": 4.0, "y": 1, "z": 0},
                                            look_at={"x": 0, "y": 1, "z": 0}))
     resp = c.communicate(commands)
-    wheel_ids = []
-    ids = []
     for i in range(len(resp) - 1):
         r_id = OutputData.get_data_type_id(resp[i])
         if r_id == "srob":
@@ -86,12 +127,8 @@ if __name__ == "__main__":
                     jointNamesDict.update({"wristRight": joint_id})
                 elif "magnet_right" in joint_name:
                     jointNamesDict.update({"magnetRight": joint_id})
-                # if "wheel" in joint_name:
-                    # wheel_ids.append(joint_id)
-                # if "torso" in joint_name:
-                    # ids.append(joint_id)
 
-    # Move the wheels forward.
+    # Create empty list to store commands
     commands = []
     # for wheel_id in wheel_ids:
         # commands.append({"$type": "set_revolute_target",
@@ -103,16 +140,17 @@ if __name__ == "__main__":
                          # "id": robot_id,
                          # "joint_id": id1,
                          # "target": 2})
-    
+
     commands.append({"$type": "set_revolute_target",
                      "id": robot_id,
                      "joint_id": jointNamesDict["column"],
                      "target": 180})
     c.communicate(commands)
     # Wait a bit.
-    for i in range(500):
+    for i in range(100):
         c.communicate([])
-    # Move backwards. The target is always the TOTAL degrees traversed, as opposed to a delta.
+
+    # Reset command list
     commands = []
     # for wheel_id in wheel_ids:
         # commands.append({"$type": "set_revolute_target",
@@ -124,14 +162,15 @@ if __name__ == "__main__":
                          # "id": robot_id,
                          # "joint_id": id1,
                          # "target": 0.75})
-         
+
     commands.append({"$type": "set_revolute_target",
                      "id": robot_id,
                      "joint_id": jointNamesDict["column"],
                      "target": 0.75})
     c.communicate(commands)
     # Wait a bit.
-    for i in range(500):
+    for i in range(100):
         c.communicate([])
 
+    # Colse communication after movements
     c.communicate({"$type": "terminate"})
