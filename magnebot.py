@@ -1,6 +1,7 @@
 from tdw.controller import Controller
 from tdw.output_data import OutputData, StaticRobot
 from tdw.tdw_utils import TDWUtils
+from tdw.keyboard_controller import KeyboardController
 import ipdb
 
 """
@@ -26,10 +27,7 @@ jointNamesDict = {
 }
 
 if __name__ == "__main__":
-    # c = Controller(launch_build=False)
     c = Controller()
-    print("This controller demonstrates low-level controls for the Magnebot")
-    print("For a high-level API, please see: https://github.com/alters-mit/magnebot")
     c.start()
     robot_id = 0
     # Add a Magnebot to the scene and request static data.
@@ -40,7 +38,10 @@ if __name__ == "__main__":
                            "rotation": {"x": 0, "y": 90, "z": 0}},
                           {"$type": "send_static_robots",
                            "ids": [robot_id],
-                           "frequency": "once"}]
+                           "frequency": "once"},
+                          {"$type": "set_screen_size",
+                           "width": 1920,
+                           "height": 1080}]
     # Add a camera to the scene.
     # commands.extend(TDWUtils.create_avatar(position={"x": -2.49, "y": 4, "z": 0},
     commands.extend(TDWUtils.create_avatar(position={"x": 4.0, "y": 1, "z": 0},
