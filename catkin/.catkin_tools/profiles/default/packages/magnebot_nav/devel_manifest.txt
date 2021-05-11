@@ -1,5 +1,0 @@
-magnebot_nav
-/home/rlkandela/Documentos/ControlRobots/Proyecto-CyPR/catkin/devel/.private/magnebot_nav/cmake.lock /home/rlkandela/Documentos/ControlRobots/Proyecto-CyPR/catkin/devel/./cmake.lock
-/home/rlkandela/Documentos/ControlRobots/Proyecto-CyPR/catkin/devel/.private/magnebot_nav/share/magnebot_nav/cmake/magnebot_navConfig-version.cmake /home/rlkandela/Documentos/ControlRobots/Proyecto-CyPR/catkin/devel/share/magnebot_nav/cmake/magnebot_navConfig-version.cmake
-/home/rlkandela/Documentos/ControlRobots/Proyecto-CyPR/catkin/devel/.private/magnebot_nav/share/magnebot_nav/cmake/magnebot_navConfig.cmake /home/rlkandela/Documentos/ControlRobots/Proyecto-CyPR/catkin/devel/share/magnebot_nav/cmake/magnebot_navConfig.cmake
-/home/rlkandela/Documentos/ControlRobots/Proyecto-CyPR/catkin/devel/.private/magnebot_nav/lib/pkgconfig/magnebot_nav.pc /home/rlkandela/Documentos/ControlRobots/Proyecto-CyPR/catkin/devel/lib/pkgconfig/magnebot_nav.pc
