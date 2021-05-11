@@ -45,6 +45,27 @@ jointNamesDict = {
         # super().__init__(port = port)
         # self.id = robotId
 
+
+def moveRobot(robotId: Union[int, str], direction: int, jointId: int, target: float = 80.0) -> dict:
+    """
+    Move magnebot's base.
+
+    Args:
+    robotId -> robot id.
+    directions -> movement's direction. 1 or -1.
+    jointId -> joint to move
+    target -> movement's target. Measured in degrees
+    Returns:
+    A `move_avatar_forward_by` command.
+    """
+    # if ((direction - 1) == -2) or ((direction - 1) == 0):
+    return {"$type": "set_revolute_target",
+            "joint_id": wheelId,
+            "id": robotId,
+            "target": target * direction}
+    # else:
+        # raise ValueError("Direction must be 1 or -1.")
+
 def moveBase(robotId: Union[int, str], direction: int, wheelId: int, target: float = 80.0) -> dict:
     """
     Move magnebot's base.
@@ -200,7 +221,6 @@ if __name__ == "__main__":
                          # "target": 0.75})
 
     done = False
-    # c.listen(key="B", function=stop())
     c.listen(key="R", commands={"$type": "set_revolute_target",
                      "id": robot_id,
                      "joint_id": jointNamesDict["column"],
@@ -219,6 +239,7 @@ if __name__ == "__main__":
                                         wheelId=jointNamesDict["column"], target=124),
              events=["press", "hold"])
     # ipdb.set_trace()
+    c.listen(key="esc", function=stop)
     # c.listen(key="W", commands=moveBase(robotId=robot_id, direction=1, wheelId=jointNamesDict["wheelRightBack"],
                                         # target=1500),
              # events=["press", "hold"])
