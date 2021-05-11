@@ -1,3 +1,6 @@
 catkin/build/*
 catkin/devel/*
 catkin/logs/*
+
+# Removing the output from the magnebot save_image
+*test_image_output*
