@@ -1,0 +1,3 @@
+catkin/build/*
+catkin/devel/*
+catkin/logs/*
