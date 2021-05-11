@@ -1,1 +1,0 @@
-/home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin/devel/.private/magnebot_nav/lib/pkgconfig/magnebot_nav.pc
