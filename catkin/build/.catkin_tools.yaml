@@ -1,0 +1,6 @@
+devel_space: /home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin/devel
+install: false
+install_space: /home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin/install
+profile: default
+source_space: /home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin/src
+workspace: /home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin

@@ -1,0 +1,5 @@
+magnebot_nav
+/home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin/devel/.private/magnebot_nav/cmake.lock /home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin/devel/./cmake.lock
+/home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin/devel/.private/magnebot_nav/share/magnebot_nav/cmake/magnebot_navConfig.cmake /home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin/devel/share/magnebot_nav/cmake/magnebot_navConfig.cmake
+/home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin/devel/.private/magnebot_nav/share/magnebot_nav/cmake/magnebot_navConfig-version.cmake /home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin/devel/share/magnebot_nav/cmake/magnebot_navConfig-version.cmake
+/home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin/devel/.private/magnebot_nav/lib/pkgconfig/magnebot_nav.pc /home/paco/masterRobotica/controlProgramacionRobots/Proyecto/Proyecto-CyPR/catkin/devel/lib/pkgconfig/magnebot_nav.pc
