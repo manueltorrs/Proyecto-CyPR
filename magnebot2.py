@@ -94,6 +94,34 @@ if __name__ == "__main__":
 
 # ----------CONTROL POR TECLADO----------------
 
-    KeyboardControls().run()
 
 #----------------------------------------------
+
+from magnebot import Magnebot, Arm
+import keyboard
+from tdw.output_data import OutputData, StaticRobot
+from tdw.tdw_utils import TDWUtils
+
+
+
+
+
+if __name__ == '__main__':
+    m = Magnebot(launch_build=True, screen_width=500, screen_height=500, skip_frames=0)
+    m.init_scene()
+
+    m.add_camera({'x': 0.5, 'y': 3, 'z': 1})
+   
+    # Control por teclado
+    while True:
+        resp = m.communicate([])
+        if(keyboard.is_pressed('w')):
+            m.move_by(1)
+        elif(keyboard.is_pressed('s')):
+            m.move_by(-1)
+            pass
+        elif(keyboard.is_pressed('esc')):
+            m.end()
+            break
+
+    
