@@ -3,6 +3,7 @@ from magnebot import Magnebot
 import numpy as np
 import ipdb
 import rospy
+import open3d as o3d
 # from std_msgs.msg import PointCloud2
 from sensor_msgs.point_cloud2 import PointCloud2
 # from std_msgs.msg import Image as SensorImage
@@ -22,41 +23,43 @@ def move(magnebot, target = 1500):
     magnebot.communicate(commands)
     done = True
 
-rospy.init_node("Nodo_1")
+# rospy.init_node("Nodo_1")
 
-pc_pub = rospy.Publisher("/mgbot/pointcloud", PointCloud2, queue_size=1)
-_ = PointCloud2()
+# pc_pub = rospy.Publisher("/mgbot/pointcloud", PointCloud2, queue_size=1)
+# _ = PointCloud2()
 
-m = Magnebot(
-    launch_build=True,
-    skip_frames=100)
+# m = Magnebot(
+    # launch_build=True,
+    # skip_frames=100)
 
-# rgb_pub = rospy.Publisher("/mgbot/rgb_img", SensorImage)
+# # rgb_pub = rospy.Publisher("/mgbot/rgb_img", SensorImage)
 
-init = 0
+# init = 0
 
-m.init_floorplan_scene("2b", 0, 3)
-while True:
-    m.move_by(0.01)
-    pointcloud = m.state.get_point_cloud()
-    msg = PointCloud2()
-    msg.data = pointcloud
-    pc_pub.publish(msg)
-    if not init:
-        init = 1
-        print("starting to pub")
-    # rgb_img = m.state.get_pil_images()
-    # depth_img = m.state.get_depth_values()
-    m.state.save_images("test_image_output")
+# m.init_floorplan_scene("2b", 0, 3)
+# while True:
+    # m.move_by(0.01)
+    # pointcloud = m.state.get_point_cloud()
+    # msg = PointCloud2()
+    # msg.data = pointcloud
+    # pc_pub.publish(msg)
+    # if not init:
+        # init = 1
+        # print("starting to pub")
+    # # rgb_img = m.state.get_pil_images()
+    # # depth_img = m.state.get_depth_values()
+    # m.state.save_images("test_image_output")
 
 if __name__ == "__main__":
-    # m = Magnebot(launch_build=True, screen_width=1920, screen_height=1080,
+    # m = Magnebot(launch_build=True, screen_width=1920, screen_height=1080)
     m = Magnebot(launch_build=True)
 
-    m.init_floorplan_scene("2b", 0)
+    m.init_floorplan_scene("2b", 0, 3)
     # ipdb.set_trace()
     img = m.state.get_point_cloud()
     print("PC: {}".format(img))
+    print("Type: {}".format(type(img)))
+    print("Shape: {}".format(img.shape))
 
     done = False
     status = False
@@ -78,19 +81,20 @@ if __name__ == "__main__":
                          # "joint_id": m.magnebot_static.wheels[wheel],
                          # "target": 1200})
 
+    pcd = o3d.geometry.PointCloud()
 
-    countBase = 0
-    countRot = 0
+    countBase = 100
+    countRot = 20
     m.listen(key='W', commands=[{"$type": "set_revolute_target",
                          "joint_id": m.magnebot_static.wheels[wheel],
-                         "target": (countBase+=100)} for wheel in m.magnebot_static.wheels],
+                         "target": (countBase+1)} for wheel in m.magnebot_static.wheels],
              events=["press", "hold"])
     m.listen(key="R", commands={"$type": "set_revolute_target",
                                 "joint_id": ids,
-                                "target": (countRot+=1)}, events=["press", "hold"])
+                                "target": (countRot+10)}, events=["press", "hold"])
     m.listen(key="E", commands={"$type": "set_revolute_target",
                                 "joint_id": ids,
-                                "target": (countRot-=1)}, events=["press", "hold"])
+                                "target": (countRot-10)}, events=["press", "hold"])
     m.listen(key='S', function=m.reset_position)
         # print("Joint name: {}".format(joint))
     # m.listen(key="R", commands={"$type": "set_revolute_target",
