@@ -6,6 +6,8 @@ import rospy
 import open3d as o3d
 # from std_msgs.msg import PointCloud2
 from sensor_msgs.point_cloud2 import PointCloud2
+from tdw.output_data import OutputData, Images, Keyboard
+from open3d_ros_helper import open3d_ros_helper as orh
 # from std_msgs.msg import Image as SensorImage
 # from PIL import Image as PILImage
 
@@ -61,7 +63,10 @@ if __name__ == "__main__":
     print("PC: {}".format(points))
     print("Type: {}".format(type(points)))
     print("Shape: {}".format(points.shape))
-    m.add_camera(position={"x": 1.43, "y": 1.87, "z": 0.77}, look_at=True, follow=True)
+    # m.add_camera(position={"x": 1.43, "y": 1.87, "z": 0.77}, look_at=True, follow=True)
+
+    rospy.init_node("nodo_culero")
+    pub = rospy.Publisher("/topic_culero",PointCloud2,queue_size=0)
 
     done = False
     status = False
@@ -91,6 +96,7 @@ if __name__ == "__main__":
                          # "joint_id": m.magnebot_static.wheels[wheel],
                          # "target": 1200})
 
+    # ipdb.set_trace()
     # Change points size from (3, 256, 256) to (n, 3) to visualize point cloud
     # Where n is 256x256 and 3 each dimension (x, y, z)
     xyz = np.zeros((np.size(points[0,:,:]), 3))
@@ -98,15 +104,28 @@ if __name__ == "__main__":
     xyz[:, 1] = np.reshape(points[1, :, :], -1)
     xyz[:, 2] = np.reshape(points[2, :, :], -1)
 
-    ipdb.set_trace()
-    pcd = o3d.geometry.PointCloud()
-    pcd.points = o3d.utility.Vector3dVector(xyz)
 
-    o3d.visualization.draw([pcd])
+    # for r in resp[:-1]:
+        # rId = OutputData.get_data_type_id(r)
+        # if rId == "keyb":
+            # keyboardId = Keyboard(r)
+            # for i in range(keyboardId.get_num_pressed()):
+                # print(keyboardId.get_pressed(i))
+
+    # points2 = m.state.get_point_cloud()
+    aux = np.zeros((np.size(points[0,:,:]), 3))
+    # aux[:, 0] = np.reshape(points2[0, :, :], -1)
+    # aux[:, 1] = np.reshape(points2[1, :, :], -1)
+    # aux[:, 2] = np.reshape(points2[2, :, :], -1)
+    # xyz = np.append(xyz, aux, axis=0)
+    pcd = o3d.geometry.PointCloud()
+
+    # o3d.visualization.ViewControl.camera_local_rotate(0, 90, 0)
+    # o3d.visualization.draw([pcd])
      
      
      
-    # countBase = 100
+    countBase = 100
     # countRot = 20
     # m.listen(key='W', commands=[{"$type": "set_revolute_target",
                          # "joint_id": m.magnebot_static.wheels[wheel],
@@ -131,6 +150,18 @@ if __name__ == "__main__":
         # # m.move_by(0.01)
     # # m.communicate(commands)
 
+    while True:
+        pcd.points = o3d.utility.Vector3dVector(xyz)
+        rospc = orh.o3dpc_to_rospc(pcd)
+        rospc.header.frame_id = "map"
+        pub.publish(rospc)
+        rospy.sleep(1)
+        m.turn_by(-10)
+        points = m.state.get_point_cloud()
+        aux[:, 0] = np.reshape(points[0, :, :], -1)
+        aux[:, 1] = np.reshape(points[1, :, :], -1)
+        aux[:, 2] = np.reshape(points[2, :, :], -1)
+        xyz = np.append(xyz, aux, axis=0)
     m.state.save_images("test_image_output")
 
     m.end()
