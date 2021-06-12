@@ -4,8 +4,9 @@ from tdw.tdw_utils import TDWUtils
 from tdw.keyboard_controller import KeyboardController
 
 
+
 if __name__ == "__main__":
-    c = Controller(launch_build=True)
+    c = Controller()#launch_build=True, screen_width=500, screen_height=500, skip_frames=0)
     print("This controller demonstrates low-level controls for the Magnebot")
     print("For a high-level API, please see: https://github.com/alters-mit/magnebot")
     c.start()
@@ -90,6 +91,8 @@ if __name__ == "__main__":
     # Wait a bit.
     for i in range(100):
         c.communicate([])
+
+"""
 #----------------------------------------------
 
 # ----------CONTROL POR TECLADO----------------
@@ -124,4 +127,4 @@ if __name__ == '__main__':
             m.end()
             break
 
-    
+"""
