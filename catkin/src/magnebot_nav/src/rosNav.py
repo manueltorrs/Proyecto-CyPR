@@ -45,14 +45,14 @@ if __name__ == "__main__":
 
     aux = np.zeros((np.size(points[0,:,:]), 3))
     pcd = o3d.geometry.PointCloud()
-    R = pcd.get_rotation_matrix_from_xyz((np.pi/2, 0, 0))
-    pcd.rotate(R, center=(0,0,0))
+    rotMat = pcd.get_rotation_matrix_from_xyz((-np.pi/2, 0, 0))
 
     # o3d.visualization.ViewControl.camera_local_rotate(0, 90, 0)
     # o3d.visualization.draw([pcd])
 
     while True:
         pcd.points = o3d.utility.Vector3dVector(xyz)
+        pcd.rotate(rotMat)
         rospc = orh.o3dpc_to_rospc(pcd)
         rospc.header.frame_id = "map"
         pub.publish(rospc)
