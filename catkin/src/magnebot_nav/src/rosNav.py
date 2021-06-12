@@ -59,9 +59,9 @@ if __name__ == "__main__":
         rospy.sleep(1)
         m.turn_by(-10)
         points = m.state.get_point_cloud()
-        aux[:, 0] = np.reshape(points[0, :, :], -1)
-        aux[:, 1] = np.reshape(points[1, :, :], -1)
-        aux[:, 2] = np.reshape(points[2, :, :], -1)
-        xyz = np.append(xyz, aux, axis=0)
+        xyz[:, 0] = np.reshape(points[0, :, :], -1)
+        xyz[:, 1] = np.reshape(points[1, :, :], -1)
+        xyz[:, 2] = np.reshape(points[2, :, :], -1)
+        # xyz = np.append(xyz, aux, axis=0)
 
     m.end()
