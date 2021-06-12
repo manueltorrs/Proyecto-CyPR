@@ -7,4 +7,3 @@ catkin/src/magnebot_nav/ros_numpy/*
 # Removing the output from the magnebot save_image
 *test_image_output*
 *.ply
-catkin/src/magnebot_nav/ros_numpy/*
