@@ -65,8 +65,8 @@ if __name__ == "__main__":
     print("Shape: {}".format(points.shape))
     # m.add_camera(position={"x": 1.43, "y": 1.87, "z": 0.77}, look_at=True, follow=True)
 
-    rospy.init_node("nodo_culero")
-    pub = rospy.Publisher("/topic_culero",PointCloud2,queue_size=0)
+    rospy.init_node("magnebot_node")
+    pub = rospy.Publisher("/pc2_publisher",PointCloud2,queue_size=0)
 
     done = False
     status = False
