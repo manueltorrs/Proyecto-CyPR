@@ -2,26 +2,25 @@ from magnebot import Magnebot, Arm
 from tdw.tdw_utils import TDWUtils
 from tdw.output_data import OutputData, Images, Keyboard
 from PIL import Image
-from pathlib import Path
 import numpy as np
 import cv2
 # import matplotlib.pyplot as plt
 
 
-def handleKeyboard(keys_pressed: list, m: Magnebot, jointIds: dict):
+def handleKeyboard(keys_pressed: list, m: Magnebot):
     '''
     Handler for keyboard. It calls other functions depending of the keys pressed
     inputs:
     - key_pressed: list of strings with the keys pressed.
     NOTE: letters are always capitalized: 'A', 'B', ...
     '''
-    dist = 1
     for key in keys_pressed:
         if key == 'Escape':
             print("STATUS: Terminando simulación...")
             m.end()
             global done
             done = True
+            exit()
         elif key == 'W':
             print("STATUS: Avanzando...")
             m.move_by(1)
@@ -77,7 +76,7 @@ def moveArm(m, arm):
 
 
 def printHelp():
-    print('Controles:')
+    print('\nControles:')
     print('- W: Mover delante')
     print('- S: Mover detrás')
     print('- A: Girar izquierda')
@@ -87,24 +86,35 @@ def printHelp():
     print('- Esc: Terminar simulación')
 
 
-if __name__ == '__main__':
-    robot_id = 0
-    m = Magnebot(launch_build=True, screen_width=500,
-                 screen_height=500, skip_frames=0)
-    m.init_scene()
-    showExtraCameras = False
 
-    jointNamesDict = {}
+if __name__ == '__main__':
+
+    m = Magnebot(launch_build=True, screen_width=500,
+                 screen_height=500, skip_frames=0) # Se añade el magnebot
+    m.init_scene() # Se inicializa la escena
+    printHelp() # Se imprime una lista con las acciones que realizan las teclas
+
+    jointNamesDict = {} # Se crea un diccionario con todas las id de las articulaciones del magnebot
     for joint_id in m.magnebot_static.joints:
         jointNamesDict[m.magnebot_static.joints[joint_id].name] = joint_id
 
-    m.add_camera({'x': 0.5, 'y': 3, 'z': -1}, camera_id="c")
+    m.add_camera({'x': 0.5, 'y': 3, 'z': -1}, camera_id="c") # Se añade una cámara externa
 
-    m.add_object("live_edge_coffee_table",
-                 position={"x": -12.8, "y": 0.96, "z": -5.47},
-                 rotation={"x": 0, "y": -90, "z": 0})
-    done = False
 
+    # Pruebas mover brazos y torso
+    commands = []
+    commands.append({"$type": "set_revolute_target",
+                     "id": m.magnebot_static.root,
+                     "joint_id": jointNamesDict["elbow_left"],
+                     "target": 45}) # Se prueba el movimiento de el codo izquierdo
+
+    m.communicate(commands)
+    
+    # Con estos comandos se consigue lo siguiente:
+    # - Que el controlador vaya enviando las teclas pulsadas cada iteración
+    # - Que la cámara del magnebot renderize los mapas de profundidad, modo albedo...
+    # - Que el controlador pase las imágenes renderizadas cada iteración
+    # - Que en la pantalla principal se muestre por defecto la cámara del magnebot
     m.communicate([{"$type": "send_keyboard",
                     "frequency": "always"},
                    {"$type": "set_pass_masks",
@@ -118,35 +128,40 @@ if __name__ == '__main__':
                    {"$type": "set_render_order", "render_order": -1,
                     "sensor_name": "SensorContainer", "avatar_id": "c"}
                    ])
-    m.add_object(model_name="trunck", position={"x": 0, "y": 0, "z": 2})
 
-    keyboard_pressed = []
+    m.add_object(model_name="trunck", position={"x": 0, "y": 0, "z": 2}) # Se añade un objeto a la escena
+    commands = []
+
+    showExtraCameras = False # Variable global que indica si las cámaras extra se deben mostrar o no
+    done = False # Variable global que indica si el script sigue en funcionamiento
+    keyboard_pressed = [] # Lista de teclas que han sido presionadas durante esta iteración
     while not done:
         resp = m.communicate([])
         for r in resp[:-1]:
             r_id = OutputData.get_data_type_id(r)
-            if r_id == "keyb":
+            if r_id == "keyb": # Cuando se presione una tecla, se añade a la lista
                 keyboard_input = Keyboard(r)
                 for i in range(keyboard_input.get_num_pressed()):
                     if keyboard_input.get_pressed(i):
                         keyboard_pressed.append(keyboard_input.get_pressed(i))
-            elif r_id == "imag" and showExtraCameras:
+            elif r_id == "imag": # Se procesan las imágenes renderizadas y, en el caso de que sea necesario, se muestran por pantalla
                 img_identifier = Images(r)
-                for i in range(img_identifier.get_num_passes()):
-                    img = img_identifier.get_image(i)
-                    pass_mask = img_identifier.get_pass_mask(i)
-                    ext = img_identifier.get_extension(i)
+                if showExtraCameras:
+                    for i in range(img_identifier.get_num_passes()):
+                        img = img_identifier.get_image(i)
+                        pass_mask = img_identifier.get_pass_mask(i)
 
-                    if pass_mask == '_depth':
-                        pil_image = Image.fromarray(
-                            TDWUtils.get_shaped_depth_pass(images=img_identifier, index=i))
-                    else:
-                        pil_image = TDWUtils.get_pil_image(img_identifier, i)
-                    if pass_mask != '_img':
-                        pix = np.array(pil_image)
-                        pix = cv2.cvtColor(pix, cv2.COLOR_BGR2RGB)
-                        cv2.imshow(pass_mask, pix)
-                        cv2.waitKey(1)
+                        if pass_mask == '_depth':
+                            pil_image = Image.fromarray(
+                                TDWUtils.get_shaped_depth_pass(images=img_identifier, index=i))
+                        else:
+                            pil_image = TDWUtils.get_pil_image(img_identifier, i)
+                        if pass_mask != '_img':
+                            pix = np.array(pil_image)
+                            pix = cv2.cvtColor(pix, cv2.COLOR_BGR2RGB)
+                            cv2.imshow(pass_mask, pix)
+                            cv2.waitKey(1)
 
-        handleKeyboard(keyboard_pressed, m, jointNamesDict)
-        keyboard_pressed = []
+        handleKeyboard(keyboard_pressed, m) # Se llama a la función que gestiona las acciones en función de las teclas presionadas
+        keyboard_pressed = [] # Se reinicia la lista
+    cv2.destroyAllWindows()
