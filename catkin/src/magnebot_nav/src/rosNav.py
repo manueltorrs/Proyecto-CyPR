@@ -39,7 +39,6 @@ def main():
     global m
     if m is UNINIT:
         m = Magnebot(launch_build=True)
-    ipdb.set_trace()
 
     m.init_floorplan_scene("2b", 0, 2)
     points = m.state.get_point_cloud()
