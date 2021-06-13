@@ -15,6 +15,9 @@ from tdw.controller import Controller
 from tdw.tdw_utils import TDWUtils
 from tdw.output_data import OutputData, StaticRobot
 
+#-----------Importing Yolov4-----------#
+import libreria as yolo
+
 """
 Add a camera to a Magnebot.
 """
@@ -53,6 +56,7 @@ if __name__ == "__main__":
                     "id": robot_id,
                     "avatar_id": avatar_id,
                     "body_part_id": torso_id}])
+    
 
 
 

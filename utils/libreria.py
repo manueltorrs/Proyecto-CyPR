@@ -156,13 +156,13 @@ def main(_argv):
             image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB)
             cv2.imwrite(FLAGS.output + 'detection' + str(count) + '.png', image)
 
-"""
+
 if __name__ == '__main__':
     try:
         app.run(main)
     except SystemExit:
         pass
-"""
+
 
 
 
