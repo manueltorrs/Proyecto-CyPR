@@ -1,5 +1,3 @@
-##Este es el repositorio para controlar las versiones del proyecto
+# Proyecto de navegación y nube de puntos usando ThreeDWorld
 
-##No trabajar aquí
-
-##Créense un branch feature/<whatever you want>
+###Main del proyecto implementado en ROS
