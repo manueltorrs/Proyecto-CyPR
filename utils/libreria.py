@@ -56,11 +56,9 @@ def main(_argv):
 
     # loop through images in list and run Yolov4 model on each
     lista=os.listdir(images)
-    print(images)
     for i in range(len(lista)):
         image=[]
         image.append(images + lista[i])
-        print(image)
 
         for count, image_path in enumerate(image, 1):
             original_image = cv2.imread(image_path)        
@@ -118,11 +116,10 @@ def main(_argv):
 
             # read in all class names from config
             class_names = utils.read_class_names(cfg.YOLO.CLASSES)
-            print(class_names)
 
             # by default allow all classes in .names file
             allowed_classes = list(class_names.values())
-            print(allowed_classes)
+            
             # custom allowed classes (uncomment line below to allow detections for only people)
             #allowed_classes = ['person']
 
@@ -162,30 +159,3 @@ if __name__ == '__main__':
         app.run(main)
     except SystemExit:
         pass
-
-
-
-
-
-"""
-    while stuck == True:
-        desicion = "s"
-        for inp, tar in test_dataset:
-            guardalo(generator,inp,tar,str("imagen_procesada_nro_") + str(testigo))
-            testigo +=1
-        print("\nLa conversion ha finalizado, puede encontrar sus imagenes en {}".format(path_seguimiento))
-        while desicion == "s":
-            print("Desea realizar otra ronda de conversion? Debe cambiar sus archivos convertidos de directorio, de lo contrario seran sobreescritos ( s / n )")
-            desicion = input()
-            
-            if desicion == "s":
-                desicion = "seguir"
-                imgdirs = lee_dir()
-                tr_dirs, ts_dirs = prepara_datos(imgdirs)
-                _, test_dataset = carga_dataset(tr_dirs, ts_dirs)
-            elif desicion == "n":
-                stuck = False
-                print("Finalizado, hasta luego")
-            else:
-                print("Por favor, escriba o \"s\" o \"n\" (sin comillas)")
-"""
