@@ -8,7 +8,7 @@ import cv2
 # import matplotlib.pyplot as plt
 
 #-----------Importing Yolov4-----------#
-import libreria
+from utils import libreria as lib
 
 def handleKeyboard(keys_pressed: list, m: Magnebot, jointIds: dict):
     '''
@@ -126,7 +126,7 @@ if __name__ == '__main__':
     while not done:
         
         try:
-            app.run(main)
+            lib.app.run(main)
         except SystemExit:
             pass
         
