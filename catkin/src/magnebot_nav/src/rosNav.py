@@ -6,11 +6,14 @@ import rospy
 import open3d as o3d
 # from std_msgs.msg import PointCloud2
 from sensor_msgs.point_cloud2 import PointCloud2
+from geometry_msgs.msg import Twist
 from tdw.output_data import OutputData, Images, Keyboard
 from open3d_ros_helper import open3d_ros_helper as orh
 # from std_msgs.msg import Image as SensorImage
 # from PIL import Image as PILImage
 
+UNINIT = object()
+m = UNINIT
 
 def stop():
     done = True
@@ -25,14 +28,24 @@ def move(magnebot, target = 1500):
     magnebot.communicate(commands)
     done = True
 
+def movement_callback(msg: Twist):
+    global m
+    rotation = msg.angular.z
+    velocity = msg.linear.x
+    m.turn_by(rotation)
+    m.move_by(velocity)
 
-if __name__ == "__main__":
-    m = Magnebot(launch_build=True)
+def main():
+    global m
+    if m is UNINIT:
+        m = Magnebot(launch_build=True)
+    ipdb.set_trace()
 
     m.init_floorplan_scene("2b", 0, 2)
     points = m.state.get_point_cloud()
 
     rospy.init_node("magnebot_node")
+    movement_sub = rospy.Subscriber("/magnebot/cmd_vel",Twist, callback=movement_callback,queue_size=0)
     pub = rospy.Publisher("/pc2_publisher",PointCloud2,queue_size=0)
 
     # Change points size from (3, 256, 256) to (n, 3) to visualize point cloud
@@ -57,7 +70,7 @@ if __name__ == "__main__":
         rospc.header.frame_id = "map"
         pub.publish(rospc)
         rospy.sleep(1)
-        m.turn_by(-10)
+        # m.turn_by(-10)
         points = m.state.get_point_cloud()
         xyz[:, 0] = np.reshape(points[0, :, :], -1)
         xyz[:, 1] = np.reshape(points[1, :, :], -1)
@@ -65,3 +78,7 @@ if __name__ == "__main__":
         # xyz = np.append(xyz, aux, axis=0)
 
     m.end()
+
+
+if __name__ == "__main__":
+    main()
