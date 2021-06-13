@@ -126,7 +126,7 @@ if __name__ == '__main__':
     while not done:
         
         try:
-            lib.app.run(main)
+            lib.app.run(lib.main)
         except SystemExit:
             pass
         
