@@ -44,7 +44,7 @@ def main():
     points = m.state.get_point_cloud()
 
     rospy.init_node("magnebot_node")
-    movement_sub = rospy.Subscriber("/magnebot/cmd_vel",Twist, callback=movement_callback,queue_size=0)
+    movement_sub = rospy.Subscriber("/magnebot/cmd_vel",Twist, callback=movement_callback)
     pub = rospy.Publisher("/pc2_publisher",PointCloud2,queue_size=0)
 
     # Change points size from (3, 256, 256) to (n, 3) to visualize point cloud
